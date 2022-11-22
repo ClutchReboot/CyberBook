@@ -8,6 +8,6 @@ print(f"{x.altered_data=}")
 
 # Check NetworkPortals
 print(f"{NetworkPortals.gather()}")
-NetworkPortals.listener(local_host='192.168.0.126', local_port=5000)
+NetworkPortals.listener(local_host='127.0.0.1', local_port=5000)
 
 
