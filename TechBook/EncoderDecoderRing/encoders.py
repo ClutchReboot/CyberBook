@@ -7,7 +7,7 @@ Used to quickly encode / decode strings.
 """
 
 
-class EDR:
+class EncoderDecoderRing:
     def __init__(self, data: str) -> None:
         self.data: str = data
         self.altered_data: str = ''
