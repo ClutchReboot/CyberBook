@@ -5,11 +5,10 @@ import FileSystemMagic
 # CrypticItems
 x = CrypticItems.DecoderRing(data="test")
 x.base64_encode()
-print(f"{x.altered_data=}")
+print(f"[*] Encoded: {x.altered_data}")
 
 # Check NetworkPortals
-print(f"{NetworkPortals.gather()}")
-NetworkPortals.listener(local_host='127.0.0.1', local_port=5000)
+print(f"[*] Gathered Info: {NetworkPortals.gather()}")
 
 # Check FileSystemMagic
-print(f'{FileSystemMagic.read_wordlist(file="somethingAwesome.txt")}')
+print(f'[*] WordList: {FileSystemMagic.read_wordlist(file="FileSystemMagic/basic.lst")}')

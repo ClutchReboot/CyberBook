@@ -46,7 +46,7 @@ def listener(local_host: str, local_port: int, buffer_size: int = 1024, carriage
 
         s.close()
 
-    except socket.error:
+    except (KeyboardInterrupt, socket.error):
         print(f'[-] Problem encountered: {socket.error} ')
         exit()
 
