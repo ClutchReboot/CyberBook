@@ -1,13 +1,13 @@
 import unittest
 
-from encoders import Basic, Base64, Hex
+from EncoderDecoderRing import EDR
 
 
 class TestBasic(unittest.TestCase):
 
     def test_wrong_input_type(self):
-        test = Basic(data=123)
-        self.assertRaises(TypeError, test)
+        test = EDR(data=123)
+        self.assertRaises(TypeError("Input 'data' requires type 'str'."), test)
 
 
 class TestBase64(unittest.TestCase):
@@ -16,14 +16,14 @@ class TestBase64(unittest.TestCase):
         """
         Successful Encoding
         """
-        test = Base64(data="Encode this").encode()
+        test = EDR(data="Encode this").base64_encode()
         self.assertEqual(test,  'RW5jb2RlIHRoaXM=')
 
     def test_successful_decoding(self):
         """
         Successful Decoding
         """
-        test = Base64(data="RW5jb2RlIHRoaXM=").decode()
+        test = EDR(data="RW5jb2RlIHRoaXM=").base64_decode()
         self.assertEqual(test,  'Encode this')
 
 

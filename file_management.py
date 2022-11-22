@@ -1,7 +1,11 @@
-import os
+from os import path
+
+"""
+File System Magic
+"""
 
 
-def read_wordlist(file=None, wordlist: list = None):
+def read_wordlist(file: str, wordlist: list = None):
     """
     Quick way to load a new wordlist from a file.
     :param file: Wordlist location
@@ -12,7 +16,7 @@ def read_wordlist(file=None, wordlist: list = None):
     if not wordlist:
         wordlist = []
 
-    if file and not os.path.isfile(file):
+    if file and not path.isfile(file):
         raise FileNotFoundError(f"Cannot locate file {file}. Please ensure it exists.")
 
     with open(file, 'r') as f:
