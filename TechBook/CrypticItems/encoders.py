@@ -1,13 +1,12 @@
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from . import tools
 
-
 """
 Used to quickly encode / decode strings.
 """
 
 
-class EncoderDecoderRing:
+class DecoderRing:
     def __init__(self, data: str) -> None:
         self.data: str = data
         self.altered_data: str = ''

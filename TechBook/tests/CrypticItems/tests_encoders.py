@@ -1,12 +1,12 @@
 import unittest
 
-from TechBook.EncoderDecoderRing import EncoderDecoderRing
+from TechBook.CrypticItems import DecoderRing
 
 
 class TestBasic(unittest.TestCase):
 
     def test_wrong_input_type(self):
-        test = EncoderDecoderRing(data=123)
+        test = DecoderRing(data=123)
         self.assertRaises(TypeError("Input 'data' requires type 'str'."), test)
 
 
@@ -16,14 +16,14 @@ class TestBase64(unittest.TestCase):
         """
         Successful Encoding
         """
-        test = EncoderDecoderRing(data="Encode this").base64_encode()
+        test = DecoderRing(data="Encode this").base64_encode()
         self.assertEqual(test,  'RW5jb2RlIHRoaXM=')
 
     def test_successful_decoding(self):
         """
         Successful Decoding
         """
-        test = EncoderDecoderRing(data="RW5jb2RlIHRoaXM=").base64_decode()
+        test = DecoderRing(data="RW5jb2RlIHRoaXM=").base64_decode()
         self.assertEqual(test,  'Encode this')
 
 

