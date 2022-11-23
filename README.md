@@ -6,7 +6,7 @@ you may notice a theme.
 ## Example
 ```python
 from TechBook import CrypticItems
-from TechBook import NetworkPortals
+from TechBook import NetworkConjuration
 from TechBook import FileSystemMagic
 
 # CrypticItems
@@ -14,9 +14,9 @@ x = CrypticItems.DecoderRing(data="test")
 x.base64_encode()
 print(f"{x.altered_data}")
 
-# Check NetworkPortals
-print(f"{NetworkPortals.gather()}")
+# NetworkPortals
+print(f"{NetworkConjuration.gather()}")
 
-# Check FileSystemMagic
+# FileSystemMagic
 print(f'{FileSystemMagic.read_wordlist(file="someWords.lst")}')
 ```

