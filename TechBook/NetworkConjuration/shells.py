@@ -28,13 +28,13 @@ def listener(local_host: str, local_port: int, buffer_size: int = 1024, carriage
         print(f"Connection: {client_address[0]}:{client_address[1]} ")
 
         while True:
-            command = input('[NetworkPortal]-$ ')
+            command = input('[NetworkConjuration]-$ ')
             if not command.strip():
                 # empty command
                 continue
 
             client_socket.send(f"{command}{carriage_return}".encode())
-            if command.lower() == "np exit":
+            if command.lower() == "exit":
                 # if the command is 'np exit', just break out of the loop
                 break
 

@@ -4,7 +4,7 @@ from setuptools import setup
 # twine upload dist/*
 
 setup(name='TechBook',
-      version='0.0.3',
+      version='0.0.4',
       description='Spellbook for coders.',
       url='https://github.com/ClutchTech/TechBook',
       keywords='techbook encoders tools',
@@ -16,7 +16,4 @@ setup(name='TechBook',
       long_description=open('README.md', 'rt').read(),
       long_description_content_type='text/markdown',
       python_requires='>=3.10',
-      install_requires=[
-            'requests',
-      ]
       )
