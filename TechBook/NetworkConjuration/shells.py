@@ -34,7 +34,7 @@ def listener(local_host: str, local_port: int, buffer_size: int = 1024, carriage
                 continue
 
             client_socket.send(f"{command}{carriage_return}".encode())
-            if command.lower() == "exit":
+            if command.lower() == "nc exit":
                 # if the command is 'np exit', just break out of the loop
                 break
 
@@ -44,7 +44,7 @@ def listener(local_host: str, local_port: int, buffer_size: int = 1024, carriage
                 output = client_socket.recv(buffer_size).decode()
                 print(output)
 
-        s.close()
+        # s.close()
 
     except (KeyboardInterrupt, socket.error):
         print(f'[-] Problem encountered: {socket.error} ')
