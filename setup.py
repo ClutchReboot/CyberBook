@@ -4,7 +4,7 @@ from setuptools import setup
 # twine upload dist/*
 
 setup(name='TechBook',
-      version='0.0.4',
+      version='0.0.5',
       description='Spellbook for coders.',
       url='https://github.com/ClutchTech/TechBook',
       keywords='techbook encoders tools',
