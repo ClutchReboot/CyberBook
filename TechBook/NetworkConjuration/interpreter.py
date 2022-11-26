@@ -10,7 +10,7 @@ class Interpreter:
         self.command_prefix: str = '-sc'
 
         # Designed to be user settings down the road
-        self.buffer_size: int = 1024
+        self.buffer_size: int = 1024 * 25
         self.carriage_return: str = '\n'
         self.timeout_in_sec: int = 5
 
