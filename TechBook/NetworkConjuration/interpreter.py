@@ -7,28 +7,80 @@ class Interpreter:
     Interpreter used for SummoningCircle listener.
     """
     def __init__(self):
-        self.command_prefix: str = '-sc'
+        self.server: socket = None
 
-        # Designed to be user settings down the road
+        self.command_prefix: str = '--'
         self.buffer_size: int = 1024 * 25
         self.carriage_return: str = '\n'
         self.timeout_in_sec: int = 5
 
-        self.server: socket = None
+        self.active_client_index: int = 0
         self.active_session: socket = None
-        self.clients = []
 
-    def shutdown(self):
-        try:
-            for client in self.clients:
-                client['client_socket'].close()
-            self.server.shutdown(socket.SHUT_RDWR)
-        except (socket.error, OSError, ValueError):
-            pass
-        self.server.close()
-        exit()
+        self.clients = []
+        """
+        self.clients = [{
+            "client_nickname": str,
+            "client_address": str,
+            "client_socket": socket
+        }]
+        """
+
+        self._basic_functions = {
+            f"{self.command_prefix}shutdown": self.shutdown,
+            f"{self.command_prefix}exit": self.exit,
+            f"{self.command_prefix}view": self.view_clients
+        }
+
+        self._advanced_functions = {
+            f"{self.command_prefix}name": self.change_nickname,
+            f"{self.command_prefix}session": self.change_session
+        }
+
+    def _parser(self, command: str) -> list:
+        """
+        Parse used to set up decision-making.
+        """
+        if not command.startswith(self.command_prefix):
+            # Is not a parser command
+            return [None, None]
+
+        split_command = command.split()
+
+        if len(split_command) > 1:
+            return [split_command[0], split_command[1:]]
+        return [split_command[0], None]
+
+    def _set_active_session(self):
+        """
+        Used to ensure 'self.active_session' is using the correct client socket.
+        """
+        if self.clients:
+            self.active_session = self.clients[self.active_client_index].get('client_socket')
+
+    def change_nickname(self, interpreter_options: list[int, str]):
+        """
+        Command: Change 'client_nickname' for a specified index in 'self.clients'
+        """
+        if len(interpreter_options) > 1:
+            index = int(interpreter_options[0])
+            name_change = interpreter_options[1]
+            self.clients[index]['client_nickname'] = name_change
+            return f'Name changed: {name_change}'
+
+    def change_session(self, interpreter_options: list[int]):
+        """
+        Command: Change client session
+        """
+
+        self.active_client_index = int(interpreter_options[0])
+        return f'Session changed: {self.active_client_index}'
 
     def exit(self):
+        """
+        Command: Exit client connection and close connection.
+        Also, clean up 'self.clients' list.
+        """
         try:
             # Create new list excluding current client_socket
             self.clients = [
@@ -41,27 +93,20 @@ class Interpreter:
             pass
 
     def is_active(self):
+        """
+        Command: Basic ping check to test if client is active.
+        Works for basic connections but not a viable solution for shell / listener concept.
+        """
         try:
             self.active_session.send(b'echo ping\n')
             return True
         except socket.error:
             return False
 
-    def view_clients(self):
-        output = '[*] Summoned Connections\n\n'
-        for index, client in enumerate(self.clients):
-            output += f"{index} -> {client['client_nickname']} : {client['client_address']}\n"
-        return output
-
-    def change_nickname(self, command: str):
-        split_command = command.split()
-        if len(split_command) > 3:
-            index = int(split_command[2])
-            name_change = split_command[3]
-            self.clients[index]['client_nickname'] = name_change
-            return f'Name changed: {name_change}'
-
     def send_command(self, command: str) -> str:
+        """
+        Command: Default way to send OS commands to the active connection's shell.
+        """
         self.active_session.send(f"{command}{self.carriage_return}".encode())
 
         # Confirm data is being sent with a timeout
@@ -72,38 +117,46 @@ class Interpreter:
 
         return 'Response timed Out.'
 
-    def parser(self, command: str):
-        if not command.startswith(self.command_prefix):
-            return False
+    def shutdown(self):
+        """
+        Command: Close client connections and shutdown server.
+        Finally, system exit.
+        """
+        try:
+            for client in self.clients:
+                client['client_socket'].close()
+            self.server.shutdown(socket.SHUT_RDWR)
+        except (socket.error, OSError, ValueError):
+            pass
+        self.server.close()
+        exit()
 
-        split_command = command.split()
-        if len(split_command) > 1:
-            return ' '.join(split_command[:2])
+    def view_clients(self):
+        """
+        Command: View all client connections in 'self.clients'
+        """
+        output = '[*] Summoned Connections\n\n'
+        for index, client in enumerate(self.clients):
+            output += f"{index} -> {client['client_nickname']} : {client['client_address']}\n"
+        return output
 
     def start_interpreter(self):
-        basic_functions = {
-            f"{self.command_prefix} shutdown": self.shutdown,
-            f"{self.command_prefix} exit": self.exit,
-            f"{self.command_prefix} view": self.view_clients
-        }
-
-        advanced_functions = {
-            f"{self.command_prefix} name": self.change_nickname
-        }
-
         while True:
-            command = input('[SC]-$ ')
-            if not command.strip() or not self.clients:
+
+            self._set_active_session()
+
+            unprocessed_command = input('[SC]-$ ')
+            if not unprocessed_command.strip() or not self.clients:
                 # empty command or no clients
                 continue
 
-            parsed = self.parser(command=command)
+            interpreter_command, interpreter_options = self._parser(command=unprocessed_command)
 
-            if parsed in basic_functions.keys():
-                function = basic_functions.get(parsed)
+            if interpreter_command in self._basic_functions.keys():
+                function = self._basic_functions.get(interpreter_command)
                 print(function())
-            elif parsed in advanced_functions.keys():
-                function = advanced_functions.get(parsed)
-                print(function(command))
+            elif interpreter_command in self._advanced_functions.keys():
+                function = self._advanced_functions.get(interpreter_command)
+                print(function(interpreter_options))
             else:
-                print(self.send_command(command=command))
+                print(self.send_command(command=unprocessed_command))
