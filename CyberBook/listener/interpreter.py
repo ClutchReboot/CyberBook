@@ -1,30 +1,22 @@
 import socket
 from select import select
+from threading import Thread
+
+from .listener import Server
 
 
-class Interpreter:
+class SummoningCircle(Server):
     """
-    Interpreter used for SummoningCircle listener.
+    Interpreter used for SummoningCircleServer listener.
     """
     def __init__(self):
-        self.server: socket = None
+
+        super().__init__()
 
         self.command_prefix: str = '--'
         self.buffer_size: int = 1024 * 25
         self.carriage_return: str = '\n'
         self.timeout_in_sec: int = 5
-
-        self.active_client_index: int = 0
-        self.active_session: socket = None
-
-        self.clients = []
-        """
-        self.clients = [{
-            "client_nickname": str,
-            "client_address": str,
-            "client_socket": socket
-        }]
-        """
 
         self._basic_functions = {
             f"{self.command_prefix}shutdown": self.shutdown,
@@ -131,6 +123,15 @@ class Interpreter:
         self.server.close()
         exit()
 
+    def start_listener(self):
+        """
+        Startup listener in the background.
+        Start interpreter.
+        """
+        listener = Thread(target=self.bind_socket)
+        listener.start()
+        return "Server started"
+
     def view_clients(self):
         """
         Command: View all client connections in 'self.clients'
@@ -140,23 +141,41 @@ class Interpreter:
             output += f"{index} -> {client['client_nickname']} : {client['client_address']}\n"
         return output
 
-    def start_interpreter(self):
-        while True:
+    def instruction(self, *args, **kwargs):
+        """
+        Used for decision making. Called by main interactive function.
+        """
+        # while True:
+        #
+        #     self._set_active_session()
+        #
+        #     unprocessed_command = input('[SC]-$ ')
+        #     if not unprocessed_command.strip() or not self.clients:
+        #         # empty command or no clients
+        #         continue
+        #
+        #     interpreter_command, interpreter_options = self._parser(command=unprocessed_command)
+        #
+        #     if interpreter_command in self._basic_functions.keys():
+        #         function = self._basic_functions.get(interpreter_command)
+        #         print(function())
+        #     elif interpreter_command in self._advanced_functions.keys():
+        #         function = self._advanced_functions.get(interpreter_command)
+        #         print(function(interpreter_options))
+        #     else:
+        #         print(self.send_command(command=unprocessed_command))
 
-            self._set_active_session()
+        print(f"{args=}")
+        if 'start' in args[0]:
+            return self.start_listener()
 
-            unprocessed_command = input('[SC]-$ ')
-            if not unprocessed_command.strip() or not self.clients:
-                # empty command or no clients
-                continue
+        interpreter_command, interpreter_options = self._parser(command=unprocessed_command)
 
-            interpreter_command, interpreter_options = self._parser(command=unprocessed_command)
-
-            if interpreter_command in self._basic_functions.keys():
-                function = self._basic_functions.get(interpreter_command)
-                print(function())
-            elif interpreter_command in self._advanced_functions.keys():
-                function = self._advanced_functions.get(interpreter_command)
-                print(function(interpreter_options))
-            else:
-                print(self.send_command(command=unprocessed_command))
+        if interpreter_command in self._basic_functions.keys():
+            function = self._basic_functions.get(interpreter_command)
+            print(function())
+        elif interpreter_command in self._advanced_functions.keys():
+            function = self._advanced_functions.get(interpreter_command)
+            print(function(interpreter_options))
+        else:
+            print(self.send_command(command=unprocessed_command))

@@ -3,15 +3,20 @@ from setuptools import setup
 # python setup.py sdist
 # twine upload dist/*
 
-setup(name='TechBook',
-      version='0.0.8',
-      description='Spellbook for coders.',
+setup(name='CyberBook',
+      version='0.0.9',
+      description='Cyber spellbook for developers.',
       url='https://github.com/ClutchTech/TechBook',
-      keywords='techbook encoders tools',
+      keywords='cyberbook encoders tools',
       author='Clutch_Reboot',
       author_email='clutchshadow26@gmail.com',
       license='GNU General Public License v3.0',
-      packages=['TechBook.CrypticItems', 'TechBook.FileSystemMagic', 'TechBook.NetworkConjuration'],
+      packages=[
+            'CyberBook.encoders',
+            'CyberBook.interactive',
+            'CyberBook.listener',
+            'CyberBook.wordlists'
+      ],
       zip_safe=False,
       long_description=open('README.md', 'rt').read(),
       long_description_content_type='text/markdown',

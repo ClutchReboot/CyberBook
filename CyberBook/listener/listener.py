@@ -2,10 +2,8 @@ import socket
 from threading import Thread
 from time import sleep
 
-from TechBook.listener.interpreter import Interpreter
 
-
-class SummoningCircle(Interpreter):
+class Server:
     """
     Listener designed to work with Netcat reverse shells.
     """
@@ -15,13 +13,23 @@ class SummoningCircle(Interpreter):
             local_port: int = 5000,
     ):
 
-        super().__init__()
-
         self.local_host = local_host
         self.local_port = local_port
 
         self.server: socket = None
         self.active_session: socket = None
+
+        self.active_client_index: int = 0
+        self.active_session: socket = None
+
+        self.clients = []
+        """
+        self.clients = [{
+            "client_nickname": str,
+            "client_address": str,
+            "client_socket": socket
+        }]
+        """
 
     def bind_socket(self) -> None:
         """
@@ -50,13 +58,3 @@ class SummoningCircle(Interpreter):
 
         except (socket.error, KeyboardInterrupt):
             print(f'[-] Problem encountered: {socket.error} ')
-
-    def start(self):
-        """
-        Startup listener in the background.
-        Start interpreter.
-        """
-        listener = Thread(target=self.bind_socket)
-        listener.start()
-        sleep(1)
-        self.start_interpreter()
