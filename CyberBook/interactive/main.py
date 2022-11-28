@@ -34,7 +34,9 @@ class CyberBookInterpreter:
                     # empty command or no clients
                     continue
 
-                x.instruction(unprocessed_command)
+                split_command = unprocessed_command.split()
+
+                print(x.instruction(*split_command))
 
         except KeyboardInterrupt:
             exit()

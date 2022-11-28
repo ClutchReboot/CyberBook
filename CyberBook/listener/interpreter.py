@@ -29,19 +29,17 @@ class SummoningCircle(Server):
             f"{self.command_prefix}session": self.change_session
         }
 
-    def _parser(self, command: str) -> list:
+    def _parser(self, *args, **kwargs) -> list:
         """
         Parse used to set up decision-making.
         """
-        if not command.startswith(self.command_prefix):
-            # Is not a parser command
-            return [None, None]
 
-        split_command = command.split()
+        args_list = list(args)
+        command = args_list.pop(0)
 
-        if len(split_command) > 1:
-            return [split_command[0], split_command[1:]]
-        return [split_command[0], None]
+        if len(args) > 1:
+            return [command, args_list]
+        return [command, None]
 
     def _set_active_session(self):
         """
@@ -145,31 +143,18 @@ class SummoningCircle(Server):
         """
         Used for decision making. Called by main interactive function.
         """
-        # while True:
-        #
-        #     self._set_active_session()
-        #
-        #     unprocessed_command = input('[SC]-$ ')
-        #     if not unprocessed_command.strip() or not self.clients:
-        #         # empty command or no clients
-        #         continue
-        #
-        #     interpreter_command, interpreter_options = self._parser(command=unprocessed_command)
-        #
-        #     if interpreter_command in self._basic_functions.keys():
-        #         function = self._basic_functions.get(interpreter_command)
-        #         print(function())
-        #     elif interpreter_command in self._advanced_functions.keys():
-        #         function = self._advanced_functions.get(interpreter_command)
-        #         print(function(interpreter_options))
-        #     else:
-        #         print(self.send_command(command=unprocessed_command))
 
-        print(f"{args=}")
-        if 'start' in args[0]:
+        if 'start' == args[0].lower():
             return self.start_listener()
 
-        interpreter_command, interpreter_options = self._parser(command=unprocessed_command)
+        if not self.clients:
+            # empty command or no clients
+            return "No clients"
+
+        self._set_active_session()
+
+        interpreter_command, interpreter_options = self._parser(*args, **kwargs)
+        print(f"{interpreter_command, interpreter_options=}")
 
         if interpreter_command in self._basic_functions.keys():
             function = self._basic_functions.get(interpreter_command)
@@ -178,4 +163,5 @@ class SummoningCircle(Server):
             function = self._advanced_functions.get(interpreter_command)
             print(function(interpreter_options))
         else:
-            print(self.send_command(command=unprocessed_command))
+            command = ' '. join(list(args))
+            print(self.send_command(command=command))
