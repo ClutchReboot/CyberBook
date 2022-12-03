@@ -1,30 +1,22 @@
 import socket
 from select import select
+from threading import Thread
+
+from .listener import Server
 
 
-class Interpreter:
+class SummoningCircle(Server):
     """
-    Interpreter used for SummoningCircle listener.
+    Interpreter used for SummoningCircleServer listener.
     """
     def __init__(self):
-        self.server: socket = None
+
+        super().__init__()
 
         self.command_prefix: str = '--'
         self.buffer_size: int = 1024 * 25
         self.carriage_return: str = '\n'
         self.timeout_in_sec: int = 5
-
-        self.active_client_index: int = 0
-        self.active_session: socket = None
-
-        self.clients = []
-        """
-        self.clients = [{
-            "client_nickname": str,
-            "client_address": str,
-            "client_socket": socket
-        }]
-        """
 
         self._basic_functions = {
             f"{self.command_prefix}shutdown": self.shutdown,
@@ -37,19 +29,17 @@ class Interpreter:
             f"{self.command_prefix}session": self.change_session
         }
 
-    def _parser(self, command: str) -> list:
+    def _parser(self, *args, **kwargs) -> list:
         """
         Parse used to set up decision-making.
         """
-        if not command.startswith(self.command_prefix):
-            # Is not a parser command
-            return [None, None]
 
-        split_command = command.split()
+        args_list = list(args)
+        command = args_list.pop(0)
 
-        if len(split_command) > 1:
-            return [split_command[0], split_command[1:]]
-        return [split_command[0], None]
+        if len(args) > 1:
+            return [command, args_list]
+        return [command, None]
 
     def _set_active_session(self):
         """
@@ -131,6 +121,15 @@ class Interpreter:
         self.server.close()
         exit()
 
+    def start_listener(self):
+        """
+        Startup listener in the background.
+        Start interpreter.
+        """
+        listener = Thread(target=self.bind_socket)
+        listener.start()
+        return "Server started"
+
     def view_clients(self):
         """
         Command: View all client connections in 'self.clients'
@@ -140,23 +139,28 @@ class Interpreter:
             output += f"{index} -> {client['client_nickname']} : {client['client_address']}\n"
         return output
 
-    def start_interpreter(self):
-        while True:
+    def instruction(self, *args, **kwargs):
+        """
+        Used for decision making. Called by main interpreter function.
+        """
 
-            self._set_active_session()
+        if 'start' == args[0].lower():
+            return self.start_listener()
 
-            unprocessed_command = input('[SC]-$ ')
-            if not unprocessed_command.strip() or not self.clients:
-                # empty command or no clients
-                continue
+        if not self.clients:
+            # empty command or no clients
+            return "No clients"
 
-            interpreter_command, interpreter_options = self._parser(command=unprocessed_command)
+        self._set_active_session()
 
-            if interpreter_command in self._basic_functions.keys():
-                function = self._basic_functions.get(interpreter_command)
-                print(function())
-            elif interpreter_command in self._advanced_functions.keys():
-                function = self._advanced_functions.get(interpreter_command)
-                print(function(interpreter_options))
-            else:
-                print(self.send_command(command=unprocessed_command))
+        interpreter_command, interpreter_options = self._parser(*args, **kwargs)
+
+        if interpreter_command in self._basic_functions.keys():
+            function = self._basic_functions.get(interpreter_command)
+            print(function())
+        elif interpreter_command in self._advanced_functions.keys():
+            function = self._advanced_functions.get(interpreter_command)
+            print(function(interpreter_options))
+        else:
+            command = ' '. join(list(args))
+            print(self.send_command(command=command))

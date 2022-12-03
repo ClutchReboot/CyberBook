@@ -1,5 +1,5 @@
 from base64 import urlsafe_b64decode, urlsafe_b64encode
-from . import tools
+from . import utils
 
 """
 Used to quickly encode / decode strings.
@@ -72,14 +72,14 @@ class DecoderRing:
         result = ""
 
         for char in data:
-            if tools.is_not_ascii_letter(character=char):  # Account for spaces and special chars.
+            if utils.is_not_ascii_letter(character=char):  # Account for spaces and special chars.
                 result += char
             elif char.isupper():
-                enciphered_index = (tools.ascii_to_index(letter=char) + shift) % 26
-                result += tools.index_to_ascii(index=enciphered_index, capitalize=True)
+                enciphered_index = (utils.ascii_to_index(letter=char) + shift) % 26
+                result += utils.index_to_ascii(index=enciphered_index, capitalize=True)
             else:
-                enciphered_index = (tools.ascii_to_index(letter=char) + shift) % 26
-                result += tools.index_to_ascii(index=enciphered_index)
+                enciphered_index = (utils.ascii_to_index(letter=char) + shift) % 26
+                result += utils.index_to_ascii(index=enciphered_index)
         return result
 
     def caeser_decode(self, shift: int = 5) -> str:
@@ -91,12 +91,12 @@ class DecoderRing:
         result = ""
 
         for char in data:
-            if tools.is_not_ascii_letter(character=char):  # Account for spaces and special chars.
+            if utils.is_not_ascii_letter(character=char):  # Account for spaces and special chars.
                 result += char
             elif char.isupper():
-                enciphered_index = (tools.ascii_to_index(letter=char) - shift) % 26
-                result += tools.index_to_ascii(index=enciphered_index, capitalize=True)
+                enciphered_index = (utils.ascii_to_index(letter=char) - shift) % 26
+                result += utils.index_to_ascii(index=enciphered_index, capitalize=True)
             else:
-                enciphered_index = (tools.ascii_to_index(letter=char) - shift) % 26
-                result += tools.index_to_ascii(index=enciphered_index)
+                enciphered_index = (utils.ascii_to_index(letter=char) - shift) % 26
+                result += utils.index_to_ascii(index=enciphered_index)
         return result
