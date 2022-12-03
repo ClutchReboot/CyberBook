@@ -141,7 +141,7 @@ class SummoningCircle(Server):
 
     def instruction(self, *args, **kwargs):
         """
-        Used for decision making. Called by main interactive function.
+        Used for decision making. Called by main interpreter function.
         """
 
         if 'start' == args[0].lower():

@@ -13,7 +13,7 @@ setup(name='CyberBook',
       license='GNU General Public License v3.0',
       packages=[
             'CyberBook.encoders',
-            'CyberBook.interactive',
+            'CyberBook.interpreter',
             'CyberBook.listener',
             'CyberBook.wordlists'
       ],

@@ -2,10 +2,10 @@
 This is a collection of functions / tools that are used frequently enough to store them some place.
 
 ## Example
+
 ```python
-from CyberBook.encoders import DecoderRing
-from CyberBook import listener
-from CyberBook import wordlists
+from CyberBook.modules.encoders import DecoderRing
+from CyberBook.modules import listener, wordlists
 
 # CrypticItems
 x = DecoderRing(data="test")

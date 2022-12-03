@@ -1,5 +1,4 @@
-from CyberBook.encoders import DecoderRing
-from CyberBook.listener import SummoningCircle
+from CyberBook import modules
 
 
 class CyberBookInterpreter:
@@ -11,8 +10,8 @@ class CyberBookInterpreter:
         self.prompt: str = '[CBI]-$ '
         self.command_prefix: str = '--'
 
-        self.sc = SummoningCircle()
-        self.dr = DecoderRing(data='')
+        self.sc = modules.SummoningCircle()
+        self.dr = modules.DecoderRing(data='')
 
         self.current_module = self.sc.instruction
 
@@ -35,11 +34,11 @@ class CyberBookInterpreter:
             "isCommand": False
         }
 
-        if command.startswith(self.command_prefix):
+        if parsed_object["command"].startswith(self.command_prefix):
             parsed_object["isCommand"] = True
 
         if len(split_command) > 1:
-            parsed_object["options"] = split_command[1]
+            parsed_object["options"] = split_command[1:]
 
         return parsed_object
 
@@ -49,6 +48,11 @@ class CyberBookInterpreter:
         Set self.current_module.
         Update self.prompt.
         """
+        print(
+            f"module: {module}",
+            f"keys: {self.modules.keys()}",
+            sep='\n'
+        )
         if module in self.modules.keys():
             self.current_module = self.modules.get(module)
             self.prompt: str = f'[CBI-{module.upper()}]-$ '
@@ -59,12 +63,14 @@ class CyberBookInterpreter:
         message = f"""
     [*] CyberBookInterpreter
     
-    Utilize '{self.command_prefix}' to access parser utilities.
+    Utilize '{self.command_prefix}' to access Interpreter utilities.
     Otherwise, commands will be sent directly to modules. 
     
-        --module {list(self.modules.keys())}
+        {self.command_prefix}module {list(self.modules.keys())}
             Select module to use. SummoningCircle on by default.
-        --help
+        {self.command_prefix}exit
+            Exit Interactive mode.
+        {self.command_prefix}help
             Display help message.
     """
 
@@ -81,15 +87,13 @@ class CyberBookInterpreter:
                     # or no clients
                     continue
 
-
-                split_command = unprocessed_command.split()
                 parsed_command = self._parser(command=unprocessed_command)
 
-                if parsed_command.get('command', '').startswith(self.command_prefix):
+                if parsed_command['isCommand']:
                     # First sort by self.command_prefix
 
                     if 'module' in parsed_command['command']:
-                        results = self._set_modules(module=parsed_command['options'])
+                        results = self._set_modules(*parsed_command['options'])
                     elif 'exit' in parsed_command['command']:
                         quit()
                     elif 'help' in parsed_command['command']:
