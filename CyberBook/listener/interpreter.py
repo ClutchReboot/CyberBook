@@ -154,7 +154,6 @@ class SummoningCircle(Server):
         self._set_active_session()
 
         interpreter_command, interpreter_options = self._parser(*args, **kwargs)
-        print(f"{interpreter_command, interpreter_options=}")
 
         if interpreter_command in self._basic_functions.keys():
             function = self._basic_functions.get(interpreter_command)
