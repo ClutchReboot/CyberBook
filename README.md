@@ -4,17 +4,16 @@ This is a collection of functions / tools that are used frequently enough to sto
 ## Example
 
 ```python
-from CyberBook.DecoderRing import DecoderRing
-from CyberBook.modules import listener, wordlists
+import CyberBook
 
 # CrypticItems
-x = DecoderRing(data="test")
-x.base64_encode()
-print(f"{x.altered_data}")
+dr = CyberBook.DecoderRing(data="test")
+dr.base64_encode()
+print(f"{dr.altered_data}")
 
 # NetworkPortals
-print(f"{listener.gather()}")
+print(f"{CyberBook.Identify.os_specs()}")
 
 # FileSystemMagic
-print(f'{wordlists.read_wordlist(file="someWords.lst")}')
+print(f'{CyberBook.read_wordlist(file="someWords.lst")}')
 ```
