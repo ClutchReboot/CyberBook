@@ -3,7 +3,7 @@ import platform
 import datetime
 
 
-def gather():
+def os_specs():
     hostname = socket.gethostname()
     return {
         "hostname": hostname,

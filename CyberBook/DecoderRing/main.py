@@ -1,12 +1,14 @@
 from base64 import urlsafe_b64decode, urlsafe_b64encode
-from . import utils
+import hashlib
 
-"""
-Used to quickly encode / decode strings.
-"""
+from . import utils
 
 
 class DecoderRing:
+    """
+    Many options for encoding / decoding.
+    Also includes some encryption options such as MD5.
+    """
     def __init__(self, data: str) -> None:
         self.data: str = data
         self.altered_data: str = ''
@@ -100,3 +102,8 @@ class DecoderRing:
                 enciphered_index = (utils.ascii_to_index(letter=char) - shift) % 26
                 result += utils.index_to_ascii(index=enciphered_index)
         return result
+
+    def encrypt_md5(self):
+        data = self._data()
+        hashed_value = hashlib.md5(data.encode())
+        return hashed_value.hexdigest()

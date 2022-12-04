@@ -4,7 +4,7 @@ This is a collection of functions / tools that are used frequently enough to sto
 ## Example
 
 ```python
-from CyberBook.modules.encoders import DecoderRing
+from CyberBook.DecoderRing import DecoderRing
 from CyberBook.modules import listener, wordlists
 
 # CrypticItems

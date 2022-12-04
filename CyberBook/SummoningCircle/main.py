@@ -7,7 +7,8 @@ from .listener import Server
 
 class SummoningCircle(Server):
     """
-    Interpreter used for SummoningCircleServer listener.
+    NOTE: Currently, only works with SummoingCircleInterpreter. Separate package.
+    Interpreter used for SummoningCircleServer SummoningCircle.
     """
     def __init__(self):
 
@@ -85,7 +86,7 @@ class SummoningCircle(Server):
     def is_active(self):
         """
         Command: Basic ping check to test if client is active.
-        Works for basic connections but not a viable solution for shell / listener concept.
+        Works for basic connections but not a viable solution for shell / SummoningCircle concept.
         """
         try:
             self.active_session.send(b'echo ping\n')
@@ -123,7 +124,7 @@ class SummoningCircle(Server):
 
     def start_listener(self):
         """
-        Startup listener in the background.
+        Startup SummoningCircle in the background.
         Start interpreter.
         """
         listener = Thread(target=self.bind_socket)

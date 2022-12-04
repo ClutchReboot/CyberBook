@@ -7,7 +7,7 @@ def reverse_shell(remote_host: str, remote_port: int, buffer_size: int = 1024) -
     Opens a connection to a remote host.
     Allows remote host to execute OS commands on local system.
 
-    Works with listener().
+    Works with SummoningCircle().
     """
 
     # create the socket object
