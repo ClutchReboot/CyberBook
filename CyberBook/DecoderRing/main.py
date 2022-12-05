@@ -9,9 +9,11 @@ class DecoderRing:
     Many options for encoding / decoding.
     Also includes some encryption options such as MD5.
     """
-    def __init__(self, data: str) -> None:
+    def __init__(self, data: str = '') -> None:
         self.data: str = data
         self.altered_data: str = ''
+
+        self.shift: int = 0
 
         if not isinstance(data, str):
             raise TypeError("Input 'data' requires type 'str'.")
@@ -30,47 +32,52 @@ class DecoderRing:
             return self.altered_data
         return self.data
 
-    def base64_encode(self) -> str:
+    def data(self, data: str):
+        self.data = data
+        return self.data
+
+    def base64(self, decode: bool = False) -> str:
         """
-        Encode into Base64 string
+        By default, encode into Base64 string.
         """
+
         data = self._data()
+
+        if decode:
+            decoded = urlsafe_b64decode(data)
+            self.altered_data = decoded.decode()
+            return self.altered_data
+
         encoded = urlsafe_b64encode(data.encode('utf-8'))
         self.altered_data = str(encoded, 'utf-8')
         return self.altered_data
 
-    def base64_decode(self) -> str:
+    def hex(self, decode: bool = False) -> str:
         """
-        Decode Base64 string into ASCII
+        By default, encode into Hexadecimal string
         """
         data = self._data()
-        decoded = urlsafe_b64decode(data)
-        self.altered_data = decoded.decode()
-        return self.altered_data
 
-    def hex_encode(self) -> str:
-        """
-        Encode into Hexadecimal string
-        """
-        data = self._data()
+        if decode:
+            self.altered_data = bytes.fromhex(data).decode('utf-8')
+            return self.altered_data
+
         bytes_conversion = data.encode('utf-8')
         self.altered_data = bytes_conversion.hex()
         return self.altered_data
 
-    def hex_decode(self) -> str:
-        """
-        Decode Hexadecimal into ASCII
-        """
-        data = self._data()
-        self.altered_data = bytes.fromhex(data).decode('utf-8')
-        return self.altered_data
-
-    def caeser_encode(self, shift: int = 5) -> str:
+    def caeser(self, shift: int = 5, decode: bool = False) -> str:
         """
         Caeser's Cipher used on a string.
         """
         data = self._data()
 
+        if self.shift:
+            shift = self.shift
+
+        if decode:
+            shift = -shift
+
         result = ""
 
         for char in data:
@@ -81,25 +88,6 @@ class DecoderRing:
                 result += utils.index_to_ascii(index=enciphered_index, capitalize=True)
             else:
                 enciphered_index = (utils.ascii_to_index(letter=char) + shift) % 26
-                result += utils.index_to_ascii(index=enciphered_index)
-        return result
-
-    def caeser_decode(self, shift: int = 5) -> str:
-        """
-        Decipher Caeser's Cipher. Shift should be the value that was used to originally encipher the text.
-        """
-        data = self._data()
-
-        result = ""
-
-        for char in data:
-            if utils.is_not_ascii_letter(character=char):  # Account for spaces and special chars.
-                result += char
-            elif char.isupper():
-                enciphered_index = (utils.ascii_to_index(letter=char) - shift) % 26
-                result += utils.index_to_ascii(index=enciphered_index, capitalize=True)
-            else:
-                enciphered_index = (utils.ascii_to_index(letter=char) - shift) % 26
                 result += utils.index_to_ascii(index=enciphered_index)
         return result
 
