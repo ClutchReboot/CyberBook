@@ -24,7 +24,7 @@ class DecoderRing:
             "altered_data": self.altered_data
         }
 
-    def _data(self) -> str:
+    def _assign_data(self) -> str:
         """
         Use self.altered_data over self.data
         """
@@ -33,6 +33,9 @@ class DecoderRing:
         return self.data
 
     def data(self, data: str):
+        """
+        Setter function. To be used with interpreter.
+        """
         self.data = data
         return self.data
 
@@ -41,7 +44,7 @@ class DecoderRing:
         By default, encode into Base64 string.
         """
 
-        data = self._data()
+        data = self._assign_data()
 
         if decode:
             decoded = urlsafe_b64decode(data)
@@ -56,7 +59,7 @@ class DecoderRing:
         """
         By default, encode into Hexadecimal string
         """
-        data = self._data()
+        data = self._assign_data()
 
         if decode:
             self.altered_data = bytes.fromhex(data).decode('utf-8')
@@ -70,7 +73,7 @@ class DecoderRing:
         """
         Caeser's Cipher used on a string.
         """
-        data = self._data()
+        data = self._assign_data()
 
         if self.shift:
             shift = self.shift
@@ -91,7 +94,10 @@ class DecoderRing:
                 result += utils.index_to_ascii(index=enciphered_index)
         return result
 
-    def encrypt_md5(self):
-        data = self._data()
+    def md5(self):
+        """
+        Encrypt string into MD5 hash.
+        """
+        data = self._assign_data()
         hashed_value = hashlib.md5(data.encode())
         return hashed_value.hexdigest()
