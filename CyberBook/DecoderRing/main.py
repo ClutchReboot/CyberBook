@@ -92,7 +92,8 @@ class DecoderRing:
             else:
                 enciphered_index = (utils.ascii_to_index(letter=char) + shift) % 26
                 result += utils.index_to_ascii(index=enciphered_index)
-        return result
+        self.altered_data = result
+        return self.altered_data
 
     def md5(self):
         """
@@ -100,4 +101,5 @@ class DecoderRing:
         """
         data = self._assign_data()
         hashed_value = hashlib.md5(data.encode())
-        return hashed_value.hexdigest()
+        self.altered_data = hashed_value.hexdigest()
+        return self.altered_data
