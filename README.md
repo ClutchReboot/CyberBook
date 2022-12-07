@@ -7,8 +7,8 @@ This is a collection of functions / tools that are used frequently enough to sto
 import CyberBook
 
 # CrypticItems
-dr = CyberBook.DecoderRing(data="test")
-dr.base64_encode()
+dr = CyberBook.DecoderRing(data='test')
+dr.base64()
 print(f"{dr.altered_data}")
 
 # NetworkPortals

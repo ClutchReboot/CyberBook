@@ -32,7 +32,7 @@ class DecoderRing:
             return self.altered_data
         return self.data
 
-    def data(self, data: str):
+    def set_data(self, data: str):
         """
         Setter function. To be used with interpreter.
         """
