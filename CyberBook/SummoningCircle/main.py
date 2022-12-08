@@ -21,6 +21,7 @@ class SummoningCircle:
         self.carriage_return = carriage_return
 
         self.buffer_size = 1024 * 25
+        self.max_clients = 5
 
         self.server: socket = None
         self.clients: list[socket] = []
@@ -35,7 +36,7 @@ class SummoningCircle:
 
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.bind((self.local_host, self.local_port))
-            self.server.listen(5)
+            self.server.listen(self.max_clients)
 
             print(f"Listening for connection(s)...")
 
@@ -67,15 +68,15 @@ class SummoningCircle:
         except (socket.error, OSError, ValueError):
             pass
 
-    def send(self, command: str, client_session: socket = None) -> str:
+    def send(self, data: str, client_session: socket = None) -> str:
         """
-        Default way to send OS commands to the active connection's shell.
+        Default way to send data to the active connection's shell.
         """
 
         if not client_session:
             client_session = self.active_session
 
-        client_session.send(f"{command}{self.carriage_return}".encode())
+        client_session.send(f"{data}{self.carriage_return}".encode())
 
         # Confirm data is being sent with a timeout
         ready = select([client_session], [], [], self.timeout_in_sec)
@@ -83,7 +84,16 @@ class SummoningCircle:
         if ready[0]:
             return client_session.recv(self.buffer_size).decode()
 
-        return 'Response timed Out.'
+        return 'Send timed Out.'
+
+    def start(self):
+        """
+        Startup SummoningCircle in the background.
+        Start interpreter.
+        """
+        listener = Thread(target=self._bind_socket)
+        listener.start()
+        return "Server started"
 
     def stop(self):
         """
@@ -97,11 +107,18 @@ class SummoningCircle:
             pass
         self.server.close()
 
-    def start(self):
+    def receive(self, client_session: socket = None) -> str:
         """
-        Startup SummoningCircle in the background.
-        Start interpreter.
+        Default way to receive data.
         """
-        listener = Thread(target=self._bind_socket)
-        listener.start()
-        return "Server started"
+
+        if not client_session:
+            client_session = self.active_session
+
+        # Confirm data is being sent with a timeout
+        ready = select([client_session], [], [], self.timeout_in_sec)
+
+        if ready[0]:
+            return client_session.recv(self.buffer_size).decode()
+
+        return 'Receive timed out.'
