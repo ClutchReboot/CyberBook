@@ -1,8 +1,42 @@
-from os import path
+import os
 
 """
 File System Magic
 """
+
+
+def find(name, path, file_type: str = None):
+    if file_type not in ['file', 'dir', None]:
+        raise ValueError(f"input 'file_type' should be of value 'file', 'dir' or 'None'.")
+
+    for root, dirs, files in os.walk(path):
+        if file_type == 'file':
+            if name in files:
+                return os.path.join(root, name)
+        elif file_type == 'dir':
+            if name in dirs:
+                return os.path.join(root, name)
+        else:
+            if name in dirs or name in files:
+                return os.path.join(root, name)
+
+
+def find_all(name, path, file_type: str = None):
+    result = []
+    if file_type not in ['file', 'dir', None]:
+        raise ValueError(f"input 'file_type' should be of value 'file', 'dir' or 'None'.")
+
+    for root, dirs, files in os.walk(path):
+        if file_type == 'file':
+            if name in files:
+                result.append(os.path.join(root, name))
+        elif file_type == 'dir':
+            if name in dirs:
+                result.append(os.path.join(root, name))
+        else:
+            if name in dirs or name in files:
+                result.append(os.path.join(root, name))
+    return result
 
 
 def read_wordlist(file: str, wordlist: list = None):
@@ -16,7 +50,7 @@ def read_wordlist(file: str, wordlist: list = None):
     if not wordlist:
         wordlist = []
 
-    if file and not path.isfile(file):
+    if file and not os.path.isfile(file):
         raise FileNotFoundError(f"Cannot locate file {file}. Please ensure it exists.")
 
     with open(file, 'r') as f:
