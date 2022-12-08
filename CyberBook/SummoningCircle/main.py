@@ -1,6 +1,7 @@
 import socket
 from threading import Thread
 from select import select
+from time import sleep
 
 
 class SummoningCircle:
@@ -52,11 +53,14 @@ class SummoningCircle:
         except (socket.error, KeyboardInterrupt):
             return f'[-] Problem encountered: {socket.error} '
 
-    def end_client_session(self, client_session: socket = None):
+    def end_client_session(self, client_session: socket = None, timer: int = 1):
         """
         Exit client connection and close connection.
         Also, clean up 'self.clients' list.
         """
+
+        if timer:
+            sleep(timer)
 
         if not client_session:
             client_session = self.active_session
@@ -78,13 +82,25 @@ class SummoningCircle:
 
         client_session.send(f"{data}{self.carriage_return}".encode())
 
+        return 'Sent.'
+
+    def send_recv(self, data: str, client_session: socket = None) -> str:
+        """
+        Default way to send data to the active connection's shell.
+        """
+
+        if not client_session:
+            client_session = self.active_session
+
+        client_session.send(f"{data}{self.carriage_return}".encode())
+
         # Confirm data is being sent with a timeout
         ready = select([client_session], [], [], self.timeout_in_sec)
 
         if ready[0]:
             return client_session.recv(self.buffer_size).decode()
 
-        return 'Send timed Out.'
+        return 'Send / receive timed Out.'
 
     def start(self):
         """
