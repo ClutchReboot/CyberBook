@@ -67,6 +67,7 @@ class SummoningCircle:
 
         try:
             self.clients.remove(client_session)
+            self.active_session = None
             client_session.shutdown(socket.SHUT_RDWR)
             client_session.close()
         except (socket.error, OSError, ValueError):
