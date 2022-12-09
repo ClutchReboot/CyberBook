@@ -53,10 +53,10 @@ class SummoningCircle:
         except (socket.error, KeyboardInterrupt):
             return f'[-] Problem encountered: {socket.error} '
 
-    def end_client_session(self, client_session: socket = None, timer: int = 1):
+    def close(self, client_session: socket = None, timer: int = 1):
         """
         Exit client connection and close connection.
-        Also, clean up 'self.clients' list.
+        Also, clean up 'self.clients' list and reset 'self.active_session'.
         """
 
         if timer:
@@ -75,7 +75,7 @@ class SummoningCircle:
 
     def send(self, data: str, client_session: socket = None) -> str:
         """
-        Default way to send data to the active connection's shell.
+        Send 'data' to the client session.
         """
 
         if not client_session:
@@ -87,7 +87,8 @@ class SummoningCircle:
 
     def send_recv(self, data: str, client_session: socket = None) -> str:
         """
-        Default way to send data to the active connection's shell.
+        Send 'data' to the client session.
+        Return received data.
         """
 
         if not client_session:
@@ -106,7 +107,6 @@ class SummoningCircle:
     def start(self):
         """
         Startup SummoningCircle in the background.
-        Start interpreter.
         """
         listener = Thread(target=self._bind_socket)
         listener.start()
@@ -139,3 +139,22 @@ class SummoningCircle:
             return client_session.recv(self.buffer_size).decode()
 
         return 'Receive timed out.'
+
+    def recv_send(self, data: str, client_session: socket = None) -> str:
+        """
+        Receive data.
+        Send 'data' to the client session.
+        Return received data.
+        """
+
+        if not client_session:
+            client_session = self.active_session
+
+        # Confirm data is being sent with a timeout
+        ready = select([client_session], [], [], self.timeout_in_sec)
+
+        if ready[0]:
+            client_session.send(f"{data}{self.carriage_return}".encode())
+            return client_session.recv(self.buffer_size).decode()
+
+        return 'Receive / send timed Out.'
