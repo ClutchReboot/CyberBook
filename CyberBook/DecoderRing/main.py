@@ -1,5 +1,6 @@
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 import hashlib
+from html import escape, unescape
 
 from . import utils
 
@@ -26,7 +27,7 @@ class DecoderRing:
 
     def _assign_data(self) -> str:
         """
-        Use self.altered_data over self.data
+        Use self.altered_data over self.data.
         """
         if self.altered_data:
             return self.altered_data
@@ -57,7 +58,7 @@ class DecoderRing:
 
     def hex(self, decode: bool = False) -> str:
         """
-        By default, encode into Hexadecimal string
+        By default, encode into Hexadecimal string.
         """
         data = self._assign_data()
 
@@ -67,6 +68,19 @@ class DecoderRing:
 
         bytes_conversion = data.encode('utf-8')
         self.altered_data = bytes_conversion.hex()
+        return self.altered_data
+
+    def html(self, decode: bool = False) -> str:
+        """
+        By default, encode into HTML safe string.
+        """
+        data = self._assign_data()
+
+        if decode:
+            self.altered_data = unescape(data)
+            return self.altered_data
+
+        self.altered_data = escape(data)
         return self.altered_data
 
     def caeser(self, shift: int = 5, decode: bool = False) -> str:
