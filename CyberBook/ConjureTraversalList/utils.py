@@ -13,13 +13,13 @@ def add_web_file(traversal_list: list, web_files: list):
     return [f"{file}/{direct}" for direct in traversal_list for file in web_files]
 
 
-def full_url_encoder(traversal_list: str | list):
+def full_url_encoder(unencoded: str | list):
 
-    def encoder(unencoded: str) -> str:
-        url_encode = urllib.parse.quote(unencoded)
+    def encoder(plain_text: str) -> str:
+        url_encode = urllib.parse.quote(plain_text)
         return url_encode.replace('.', '%2E')
 
-    if isinstance(traversal_list, str):
-        return encoder(unencoded=traversal_list)
+    if isinstance(unencoded, str):
+        return encoder(plain_text=unencoded)
 
-    return [encoder(unencoded=traverse) for traverse in traversal_list]
+    return [encoder(plain_text=traverse) for traverse in unencoded]
