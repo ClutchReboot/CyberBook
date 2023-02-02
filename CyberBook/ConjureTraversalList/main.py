@@ -42,7 +42,7 @@ class ConjureTraversalList:
             self._update(traversal_list=custom_payload_included)
 
         if self.web_files:
-            web_files_included = utils.add_web_file(traversal_list=self.traversal_list, web_files=self.custom_payload)
+            web_files_included = utils.add_web_file(traversal_list=self.traversal_list, web_files=self.web_files)
             self._update(traversal_list=web_files_included)
 
         if self.url_encoded:
