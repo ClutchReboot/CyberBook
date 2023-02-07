@@ -1,1 +1,1 @@
-from .main import DecoderRing
+from .main import *
