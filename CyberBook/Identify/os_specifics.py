@@ -1,22 +1,21 @@
 import socket
 import platform
+import netifaces
 
 
-def get_private_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(0)
-    try:
-        s.connect(('1.1.1.2', 1))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = '127.0.0.1'
+def get_private_ips():
+    interfaces = netifaces.interfaces()
 
-    finally:
-        s.close()
-    
-    return ip
-    
-    
+    local_ipv4 = dict()
+    for interface in interfaces:
+
+        ipv4_info = netifaces.ifaddresses(interface).get(2)
+        ipv4_addr = ipv4_info[0].get('addr')
+        local_ipv4[interface] = ipv4_addr
+
+    return local_ipv4
+
+
 def os_specs():
     hostname = socket.gethostname()
 
@@ -24,7 +23,7 @@ def os_specs():
         "hostname": hostname,
         "hostByHostname": socket.gethostbyname(hostname),
         "hostByAddress": list(socket.gethostbyname_ex(hostname)),
-        "privateIp": get_private_ip(),
+        "localIpV4": get_private_ips(),
         "platform": {
             "system": platform.system(),
             "version": platform.version(),

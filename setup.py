@@ -4,7 +4,7 @@ from setuptools import setup
 # twine upload dist/*
 
 setup(name='CyberBook',
-      version='0.0.23',
+      version='0.0.24',
       description='Cyber spellbook for developers.',
       keywords='cyberbook DecoderRing tools',
       author='Clutch_Reboot',
@@ -24,7 +24,8 @@ setup(name='CyberBook',
       python_requires='>=3.10',
       install_requires=[
             'requests',
-            'urllib3'
+            'urllib3',
+            'netifaces'
       ],
       project_urls={
             "Documentation": "https://clutchreboot.github.io/CyberBookDocs/",
