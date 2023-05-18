@@ -3,7 +3,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import time
 
 
-class HttpServer:
+class QuickHttpServer:
     def __init__(self, ip: str = '', port: int = 8000):
         """
         The HTTP server starts when this class is instantiated.
@@ -22,6 +22,6 @@ class HttpServer:
 
 
 if __name__ == '__main__':
-    hs = HttpServer()
+    hs = QuickHttpServer()
     time.sleep(5)
     hs.stop()

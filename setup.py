@@ -4,7 +4,7 @@ from setuptools import setup
 # twine upload dist/*
 
 setup(name='CyberBook',
-      version='0.0.25',
+      version='0.0.26',
       description='Cyber spellbook for developers.',
       keywords='cyberbook DecoderRing tools',
       author='Clutch_Reboot',
@@ -13,9 +13,8 @@ setup(name='CyberBook',
       packages=[
             'CyberBook',
             'CyberBook.Background',
-            'CyberBook.ConjureTraversalList',
+            'CyberBook.Lists',
             'CyberBook.DecoderRing',
-            'CyberBook.SummoningCircle',
             'CyberBook.Identify',
             'CyberBook.Misc'
       ],

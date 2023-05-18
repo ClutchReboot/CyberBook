@@ -1,12 +1,20 @@
-from . import messages_en
 from select import select
 from threading import Thread
 from time import sleep
 
 import socket
 
+HEADER = "[SC] "
 
-class SummoningCircle:
+CONNECTION_CLOSED = f"{HEADER}Connection closed."
+NO_CLIENT = f"{HEADER}No client connections."
+NO_DATA = f"{HEADER}No data was provided to send."
+SENT = f"{HEADER}Sent."
+SERVER_STARTED = f"{HEADER}Server started."
+TIMEOUT_RECEIVED = f"{HEADER}Send / Receive timed out."
+
+
+class QuickSocketListener:
     """
     Listener designed to work with Netcat reverse shells.
     """
@@ -80,7 +88,7 @@ class SummoningCircle:
             client_session.shutdown(socket.SHUT_RDWR)
             client_session.close()
 
-            return self._display_message(message=messages_en.CONNECTION_CLOSED)
+            return self._display_message(message=CONNECTION_CLOSED)
         except (socket.error, OSError, ValueError):
             pass
 
@@ -90,17 +98,17 @@ class SummoningCircle:
         """
 
         if not self.clients:
-            return self._display_message(message=messages_en.NO_CLIENT)
+            return self._display_message(message=NO_CLIENT)
 
         if not data:
-            return self._display_message(message=messages_en.NO_DATA)
+            return self._display_message(message=NO_DATA)
 
         if not client_session:
             client_session = self.active_session
 
         client_session.send(f"{data}{self.carriage_return}".encode())
 
-        return self._display_message(message=messages_en.SENT)
+        return self._display_message(message=SENT)
 
     def send_recv(self, data: str, client_session: socket = None) -> str:
         """
@@ -111,10 +119,10 @@ class SummoningCircle:
         """
 
         if not self.clients:
-            return self._display_message(message=messages_en.NO_CLIENT)
+            return self._display_message(message=NO_CLIENT)
 
         if not data:
-            return self._display_message(message=messages_en.NO_DATA)
+            return self._display_message(message=NO_DATA)
 
         if not client_session:
             client_session = self.active_session
@@ -128,7 +136,7 @@ class SummoningCircle:
             message = client_session.recv(self.buffer_size).decode()
             return self._display_message(message=message)
 
-        return self._display_message(message=messages_en.TIMEOUT_RECEIVED)
+        return self._display_message(message=TIMEOUT_RECEIVED)
 
     def start(self, timer: int = 1):
         """
@@ -138,7 +146,7 @@ class SummoningCircle:
         listener.start()
         sleep(timer)
 
-        return self._display_message(message=messages_en.SERVER_STARTED)
+        return self._display_message(message=SERVER_STARTED)
 
     def stop(self):
         """
@@ -167,7 +175,7 @@ class SummoningCircle:
             message = client_session.recv(self.buffer_size).decode()
             return self._display_message(message=message)
 
-        return self._display_message(message=messages_en.TIMEOUT_RECEIVED)
+        return self._display_message(message=TIMEOUT_RECEIVED)
 
     def recv_send(self, data: str, client_session: socket = None) -> str:
         """
@@ -177,10 +185,10 @@ class SummoningCircle:
         """
 
         if not self.clients:
-            return self._display_message(message=messages_en.NO_CLIENT)
+            return self._display_message(message=NO_CLIENT)
 
         if not data:
-            return self._display_message(message=messages_en.NO_DATA)
+            return self._display_message(message=NO_DATA)
 
         if not client_session:
             client_session = self.active_session
@@ -193,4 +201,4 @@ class SummoningCircle:
             message = client_session.recv(self.buffer_size).decode()
             return self._display_message(message=message)
 
-        return self._display_message(message=messages_en.TIMEOUT_RECEIVED)
+        return self._display_message(message=TIMEOUT_RECEIVED)
