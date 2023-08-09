@@ -1,0 +1,11 @@
+toc:
+  - title: CyberBook Documentation
+    subfolderitems:
+      - page: Main
+        url: documentation/cyberbook.md
+  - title: Misc
+    subfolderitems:
+      - page: SecLists
+        url: documentation/seclist_install.md
+      - page: OWASP TOP 10
+        url: https://owasp.org/www-project-top-ten/
